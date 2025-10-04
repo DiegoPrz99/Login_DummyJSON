@@ -1,39 +1,58 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, of, tap } from 'rxjs';
 import { LoginRequest, User } from '../interfaces/auth.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API_URL = 'https://dummyjson.com';
-  private userSubject = new BehaviorSubject<User | null>(null);
-  user$ = this.userSubject.asObservable();
+  private tokenKey = 'demo_token';
+  private _user$ = new BehaviorSubject<User | null>(null);
+  user$ = this._user$.asObservable();
 
   constructor(private http: HttpClient) {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      this.userSubject.next(JSON.parse(savedUser));
+    const token = localStorage.getItem(this.tokenKey);
+    if (token) {
+      this.fetchProfile().subscribe();
     }
   }
 
-  login(credentials: LoginRequest): Observable<User> {
-    return this.http.post<User>(`${this.API_URL}/auth/login`, credentials)
-      .pipe(
-        tap(user => {
-          this.userSubject.next(user);
-          localStorage.setItem('user', JSON.stringify(user));
-        })
-      );
+  login(body: LoginRequest) {
+    return this.http.post<any>('https://dummyjson.com/auth/login', body).pipe(
+      tap((res) => {
+        if (res && res.accessToken) {
+          localStorage.setItem(this.tokenKey, res.accessToken);
+          this._user$.next(res);
+        }
+      }),
+      catchError(err => {
+        console.error('Login error', err);
+        throw err;
+      })
+    );
   }
 
-  logout(): void {
-    localStorage.removeItem('user');
-    this.userSubject.next(null);
+  fetchProfile() {
+    const token = this.getToken();
+    if (!token) return of(null);
+
+    return this.http.get<User>('https://dummyjson.com/user/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(user => this._user$.next(user)),
+      catchError(err => {
+        console.error('fetchProfile', err);
+        this.logout();
+        return of(null);
+      })
+    );
   }
 
-  getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.API_URL}/auth/me`);
+  getToken() {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  logout() {
+    localStorage.removeItem(this.tokenKey);
+    this._user$.next(null);
   }
 }

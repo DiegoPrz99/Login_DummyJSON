@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  padding: 2rem;
+  background: linear-gradient(135deg, #4f46e5, #7ed3e2);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+.dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.8rem;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 8px 30px rgba(133, 189, 215, 0.25);
+    margin-bottom: 2rem;
+    animation: fadeIn 0.6s ease;
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 3px solid transparent;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4) border-box;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p {
+      margin: 0.2rem 0 1rem;
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+
+    button {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+      color: #fff;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+}
+
+/* 🔹 Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🔹 Responsive */
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .dashboard {
+    .profile {
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 1rem;
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+      }
+
+      h2 {
+        font-size: 1.2rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+
+      button {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}

@@ -1,21 +1,16 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+export const AuthGuard: CanActivateFn = (route, state) => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
 
-  canActivate() {
-    return this.authService.user$.pipe(
-      map(user => {
-        if (user) return true;
-        this.router.navigate(['/login']);
-        return false;
-      })
-    );
+  const token = auth.getToken();
+  if (token) {
+    return true; // Si hay token → deja pasar
   }
-}
+
+  alert('Debes iniciar sesión para acceder al Dashboard');
+  return router.createUrlTree(['/login']);
+};

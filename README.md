@@ -21,8 +21,7 @@ Antes de empezar asegúrate de tener instalado:
 ## 📥 Clonar el proyecto
 
 ```bash
-git clone 
-cd PRUEBATECNICA
+git clone https://github.com/DiegoPrz99/Login_DummyJSON.git
 ```
 
 ---
